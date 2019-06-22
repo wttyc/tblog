@@ -51,6 +51,7 @@ var nickNameHeight = 0;
 var passwordHeight = 0;
 var captchaHeight = 0;
 
+
 // var basePath = getBasePath();
 
 // var path = $("#path").val();
@@ -102,14 +103,15 @@ function reSendEmail(message) {
     var arr = message.split(",");
     var email = arr[0];
     var validateCode = arr[1];
+    alert("ss:"+path());
     $.ajax({
         type: "post",
-        url: "/sendEmail",
+        url: path() + "/sendEmail",
         data: {email: email, validateCode: validateCode},
         dataType: 'json',
-        success:function (data) {
+        success: function (data) {
             var message = data["message"];
-            if (message == "success"){
+            if (message == "success") {
                 alert("发送成功");
             }
         }
@@ -127,19 +129,17 @@ function lookEmail(message) {
     var email = arr[0];
     var opt = email.split("@")[1];
     if (opt == "qq.com") {
-        location.href("https://mail.qq.com");
+        window.open("https://mail.qq.com");
     } else if (opt == "163.com") {
-        location.href("https://mail.163.com");
+        window.open("https://mail.163.com");
     } else if (opt == "126.com") {
-        location.href("https://mail.126.com");
+        window.open("https://mail.126.com");
     } else if (opt == "sina.com") {
-        location.href("https://mail.sina.com");
+        window.open("https://mail.sina.com");
     } else if (opt == "sohu.com") {
-        location.href("https://mail.sohu.com");
+        window.open("https://mail.sohu.com");
     }
-
 }
-
 
 function register() {
     if (!checkProtocol()) {

@@ -76,7 +76,7 @@ public class Captcha {
      * @return
      */
     private static String getRandomNum(int length) {
-        String string = "QWERTYUPASDFGHJKZXCVBNM23456789qwertyupasfghjkzxcvbnm";
+        String string = "WERTYUPASDFGHJKZXCVBNM2345678wertyupasfghjkzxcvbnm";
         StringBuilder captcha = new StringBuilder();
         Random random = new Random();
         char a;

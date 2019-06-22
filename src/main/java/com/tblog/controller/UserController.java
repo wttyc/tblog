@@ -38,7 +38,7 @@ public class UserController {
 
 
     @RequestMapping(value = "/testRedirect")
-    public String redirect(Model model){
+    public String redirect(Model model) {
         System.out.println("test redurect!@@@@@@@!");
 //        ModelAndView mav = new ModelAndView("redirect:/testPage.jsp");
 
@@ -47,17 +47,18 @@ public class UserController {
 
     /**
      * 重新发送激活邮件
+     *
      * @param model
      * @return
      */
     @RequestMapping(value = "/sendEmail")
-    public Map<String,Object> sendEmail(Model model){
-        Map map = new HashMap<String,Object>();
+    public Map<String, Object> sendEmail(Model model) {
+        Map map = new HashMap<String, Object>();
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         String email = attr.getRequest().getParameter("email");
-        String validateCode  = attr.getRequest().getParameter("validateCode");
-        SendEmail.sendEmailMessage(email,validateCode);
-        map.put("message","success");
+        String validateCode = attr.getRequest().getParameter("validateCode");
+        SendEmail.sendEmailMessage(email, validateCode);
+        map.put("message", "success");
         return map;
     }
 
@@ -71,11 +72,11 @@ public class UserController {
                            @RequestParam(value = "phone", required = false) String phone,
                            @RequestParam(value = "nickName", required = false) String nickName,
                            @RequestParam(value = "code", required = false) String code) {
-        System.out.println("nickName"+nickName);
-        System.out.println("email"+email);
-        System.out.println("password"+password);
-        System.out.println("phone"+phone);
-        System.out.println("code"+code);
+        System.out.println("nickName" + nickName);
+        System.out.println("email" + email);
+        System.out.println("password" + password);
+        System.out.println("phone" + phone);
+        System.out.println("code" + code);
         logger.debug("注册...");
         if (StringUtils.isBlank(code)) {
             model.addAttribute("error", "非法注册,请重新注册!");
@@ -91,7 +92,16 @@ public class UserController {
         }
 
         User user = userService.findByEmail(email);
-        if (user != null) {
+        /**
+         *  TODO: 2019/6/22
+         *   不验证 email 是否重复
+         *   验证则需要将以下两行互换
+         *   即使用 if (user != null) {
+         */
+        //if (user != null) {
+        if (false) {
+
+
             model.addAttribute("error", "该邮箱已经注册,请登录或更换邮箱后注册!");
             return "../register";
         } else {
@@ -170,7 +180,16 @@ public class UserController {
         if (user == null) {
             map.put("message", "success");
         } else {
-            map.put("message", "fail");
+
+            /**
+             * TODO: 2019/6/22
+             *  不验证 email 是否重复 ,
+             *  验证则需要将以下两行互换
+             *  即使用  map.put("message", "success");
+             */
+
+//            map.put("message", "fail");
+            map.put("message", "success");
         }
         return map;
     }
