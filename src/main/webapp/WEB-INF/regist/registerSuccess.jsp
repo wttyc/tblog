@@ -237,10 +237,14 @@
 
 </div>
 <script type="text/javascript" src="${ctx}/js/jquery-3.2.1.min.js"></script>
-<script type="text/javascript" src="${ctx}/js/regist.js"></script>
+
 <script type="text/javascript" src="${ctx}/css/bootstrap/js/bootstrap.min.js"></script>
 
 <script type="text/javascript" src="${ctx}/css/zui/js/zui.min.js"></script>
+
+<script type="text/javascript" src="${ctx}/js/regist.js"></script>
+
+
 </body>
 <script language=javascript>
     function  showImg(){

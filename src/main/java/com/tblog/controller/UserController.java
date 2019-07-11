@@ -46,12 +46,71 @@ public class UserController {
     }
 
     /**
+     * 用户登录
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/login",method = RequestMethod.GET)
+    public String login(Model model){
+        return null;
+    }
+
+
+
+    /**
+     * 账号激活
+     *
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/activate", method = RequestMethod.GET)
+    public String activate(Model model) {
+
+        logger.info("=============激活验证=============");
+
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        String email = attr.getRequest().getParameter("email");
+        String validateCode = attr.getRequest().getParameter("validateCode");
+        String redisCode = redisTemplate.opsForValue().get(email);
+        logger.info("验证邮箱: " + email + " , 邮箱激活码: " + redisCode + " , 用户链接激活码: " + validateCode);
+
+        //判断是否已经激活
+        User user = userService.findByEmail(email);
+        if (user != null && "1".equals(user.getState())) {
+            logger.info("=============账号:" + email + " 已经激活=============");
+            model.addAttribute("success", "您的账号已经激活,请登录.");
+            return "../user/login";
+        } else if (redisCode == null) {
+            logger.info("=============激活码:" + redisCode + "过期了=============");
+            //激活码过期
+            model.addAttribute("fail", "您的激活码已失效,请重新注册.");
+            userService.deleteByEmail(email);
+            return "/regist/activeFail";
+
+        } else if (StringUtils.isNotBlank(validateCode) && validateCode.equals(redisCode)) {
+            logger.info("=============激活码正确=============");
+            //激活码正确
+            user.setState("1");
+            user.setEnable("1");
+            userService.update(user);
+            model.addAttribute("email", email);
+            return "/regist/activeSuccess";
+        } else {
+            logger.info("=============激活码错误=============");
+            model.addAttribute("fail", "激活码错误,请重新激活.");
+            return "/regist/activeFail";
+        }
+    }
+
+    /**
      * 重新发送激活邮件
      *
      * @param model
      * @return
      */
-    @RequestMapping(value = "/sendEmail")
+    @RequestMapping(value = "/sendEmail", method = RequestMethod.GET
+    )
+    @ResponseBody
     public Map<String, Object> sendEmail(Model model) {
         Map map = new HashMap<String, Object>();
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -59,6 +118,7 @@ public class UserController {
         String validateCode = attr.getRequest().getParameter("validateCode");
         SendEmail.sendEmailMessage(email, validateCode);
         map.put("message", "success");
+
         return map;
     }
 
@@ -72,11 +132,7 @@ public class UserController {
                            @RequestParam(value = "phone", required = false) String phone,
                            @RequestParam(value = "nickName", required = false) String nickName,
                            @RequestParam(value = "code", required = false) String code) {
-        System.out.println("nickName" + nickName);
-        System.out.println("email" + email);
-        System.out.println("password" + password);
-        System.out.println("phone" + phone);
-        System.out.println("code" + code);
+
         logger.debug("注册...");
         if (StringUtils.isBlank(code)) {
             model.addAttribute("error", "非法注册,请重新注册!");
@@ -91,15 +147,16 @@ public class UserController {
             return "../register";
         }
 
-        User user = userService.findByEmail(email);
+
         /**
          *  TODO: 2019/6/22
          *   不验证 email 是否重复
-         *   验证则需要将以下两行互换
-         *   即使用 if (user != null) {
+         *   验证则需要将以下四行互换
          */
-        //if (user != null) {
+        User user;
         if (false) {
+            //User user = userService.findByEmail(email);
+            //if (user != null) {
 
 
             model.addAttribute("error", "该邮箱已经注册,请登录或更换邮箱后注册!");
@@ -123,7 +180,7 @@ public class UserController {
 
             userService.regist(user);
 
-            logger.info("注册成功.");
+            logger.info("注册成功...");
 
             SendEmail.sendEmailMessage(email, validateCode);
 
@@ -162,10 +219,8 @@ public class UserController {
         User user = userService.findByPhone(phone);
 
         if (user == null) {
-            System.out.println("user is null");
             map.put("message", "success");
         } else {
-            System.out.println("user is not null");
             map.put("message", "fail");
         }
         return map;
@@ -176,7 +231,16 @@ public class UserController {
     public Map<String, Object> checkEmail(Model model, @RequestParam(value = "email", required = false) String email) {
         logger.info("注册---判断邮箱" + email + "是否可用");
         Map map = new HashMap<String, Object>();
-        User user = userService.findByEmail(email);
+
+        /**
+         *  TODO: 2019/6/24
+         *   不验证 email 是否重复
+         *   验证则需要将以下两行互换
+         */
+        User user = null;
+//        User user = userService.findByEmail(email);
+
+
         if (user == null) {
             map.put("message", "success");
         } else {

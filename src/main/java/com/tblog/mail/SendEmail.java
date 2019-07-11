@@ -50,9 +50,9 @@ public class SendEmail {
 //        builder.append("http://localhost:8080/activecode?email="+email+"&validateCode="+validateCode);
 //        message.setText(builder.toString());
 
-            message.setContent("<a href=\"http://localhost:8080/activecode?email=" + email + "&validateCode=" + validateCode + "\" target=\"_blank\">请1小时内点击这里进行TBlog账号激活</a>"
+            message.setContent("<a href=\"http://localhost:8080/tblog/user/activate?email=" + email + "&validateCode=" + validateCode + "\" target=\"_blank\">请1小时内点击这里进行TBlog账号激活</a>"
                             + "<br><br>如果不能点击,使用以下地址进行激活"
-                            + "<br><br>http://localhost:8080/activecode?email=" + email + "&validateCode=" + validateCode,
+                            + "<br><br>http://localhost:8080/tblog/user/activate?email=" + email + "&validateCode=" + validateCode,
                     "text/html;charset=UTF-8");
 
 

@@ -2,7 +2,6 @@
  * Created by Administrator on 2019/3/19.
  */
 
-
 //$(function(){
 
 
@@ -72,7 +71,8 @@ function path() {
 
 
 function changeCaptcha() {
-    $("#captchaImg").attr('src', path() + '/getCaptcha?t=' + (new Date().getTime()));
+    // $("#captchaImg").attr('src', path() + '/getCaptcha?t=' + (new Date().getTime()));
+    $("#captchaImg").attr('src', 'getCaptcha?t=' + (new Date().getTime()));
     //$("#captchaImg").attr('src', basePath + '/captchaServlet?t=' + (new Date().getTime()));
 }
 
@@ -93,28 +93,50 @@ function changeCaptcha() {
 //     return basePath;
 // }
 
+/**
+ * 重新注册
+ */
+function reRegist() {
+    window.location.href = "../register.jsp";
+}
+
 
 /**
  * 重新发送邮件
  * @param message
  */
 function reSendEmail(message) {
-    alert("reSendEmail");
     var arr = message.split(",");
     var email = arr[0];
     var validateCode = arr[1];
-    alert("ss:"+path());
     $.ajax({
         type: "post",
-        url: path() + "/sendEmail",
+        // async:true,
+        // cache:false,
+        // url: testPath + "/user/sendEmail",
+        url: "../user/sendEmail",
         data: {email: email, validateCode: validateCode},
         dataType: 'json',
+
+
         success: function (data) {
-            var message = data["message"];
-            if (message == "success") {
-                alert("发送成功");
-            }
+            alert("success:");
+            var val = data['message'];
+            alert(val);
+        },
+        error: function (data) {
+            alert("error:");
+            alert(data["message"]);
         }
+
+
+        // success: function (data) {
+        //     var message = data["message"];
+        //     alert("message" + message);
+        //     if (message == "success") {
+        //         alert("发送成功");
+        //     }
+        // }
     });
 
 }
@@ -189,7 +211,8 @@ function checkPhone() {
     } else {
         $.ajax({
             type: 'post',
-            url: path() + '/user/checkPhone',
+            // url: path() + '/user/checkPhone',
+            url: 'user/checkPhone',
             data: {phone: phone},
             dataType: 'json',
             success: function (data) {
@@ -248,7 +271,8 @@ function checkCode() {
     } else {
         $.ajax({
             type: 'post',
-            url: path() + '/user/checkCode',
+            // url: path() + '/user/checkCode',
+            url: 'user/checkCode',
             data: {code: code},
             dataType: 'json',
             success: function (data) {
@@ -306,7 +330,8 @@ function checkEmail() {
     } else {
         $.ajax({
             type: 'post',
-            url: path() + '/user/checkEmail',
+            // url: path() + '/user/checkEmail',
+            url: 'user/checkEmail',
             data: {email: email},
             dataType: 'json',
             success: function (data) {
