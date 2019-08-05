@@ -4,6 +4,8 @@ import com.tblog.common.PageHelper;
 import com.tblog.entity.Comment;
 import com.tblog.entity.UserContent;
 
+import java.util.List;
+
 /**
  * @author tyc
  * @date 2019/5/9
@@ -20,4 +22,12 @@ public interface UserContentService {
     PageHelper.Page<UserContent> findAll(UserContent content, Integer pageNum, Integer pageSize);
     PageHelper.Page<UserContent> findAll(UserContent content, Comment comment, Integer pageNum, Integer pageSize);
     PageHelper.Page<UserContent> findAllByUpvote(UserContent content, Integer pageNum, Integer pageSize);
+
+    List<UserContent> findByUserId(Long uid);
+
+    /**
+     * 查询所有文章
+     * @return
+     */
+    List<UserContent> findAll();
 }

@@ -218,7 +218,7 @@
     }
 
     $("#btn").click(function () {
-        location.href="../register,jsp";
+        location.href="../register.jsp";
     });
 </script>
 </html>

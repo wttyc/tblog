@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>登录页面</title>
+    <title>登</title>
     <!--引入BootStrap样式-->
     <link href="${ctx}/css/zui/css/zui.min.css" rel="stylesheet">
     <link href="${ctx}/css/zui/lib/uploader/zui.uploader.min.css" rel="stylesheet">
@@ -55,15 +55,15 @@
                           method="post">
 
                         <div class="form-group">
-                            <label for="username" class="sr-only">用名</label>
+                            <label for="username" class="sr-only">用户名</label>
                             <input type="text" id="username" name="username" onblur="checkUserName();"
                                    value="${email}" class="form-control" placeholder="用户名">
                         </div>
 
                         <div class="form-group">
                             <label for="password" class="sr-only">密码</label>
-                            <input type="password"  id="password" name="password" onblur="checkPassword();"
-                                   class="form-control" placeholder="密码"
+                            <input type="text"  id="password" name="password" onblur="checkPassword();"
+                                   value="" class="form-control" placeholder="密码"
                                    maxlength="16">
                         </div>
                         <div class="form-group">

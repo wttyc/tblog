@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 public class UtilsController {
 
-    @RequestMapping(value = "getCaptcha",method = RequestMethod.GET)
+    @RequestMapping(value = "/**/getCaptcha",method = RequestMethod.GET)
     public void getCaptcha(HttpServletRequest request, HttpServletResponse response){
         Captcha.drawImage(request,response);
     }

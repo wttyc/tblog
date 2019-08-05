@@ -114,7 +114,9 @@ function reSendEmail(message) {
         // async:true,
         // cache:false,
         // url: testPath + "/user/sendEmail",
-        url: "../user/sendEmail",
+
+        url: "user/sendEmail",
+        // url: "../user/sendEmail",  这个url也可以使用
         data: {email: email, validateCode: validateCode},
         dataType: 'json',
 
@@ -372,7 +374,7 @@ function checkPassword() {
     //不能为空,长度至少6位
     var password = $("#password").val();
     password.replace(/^\s+|\s+$/g, "");
-    if (password == "" || !(/^[\w\u4e00-\u9fa5]{5,16}$/g.test(password))) {
+    if (password == "" || !(/^[\w\u4e00-\u9fa5]{6,16}$/g.test(password))) {
         $("#password_span").text("请输入6至12位的密码 (数字、字母).");
         $("#password_ok").text("×").css("color", "red").css("font-size", "30px");
         if (passwordHeight == 0) {

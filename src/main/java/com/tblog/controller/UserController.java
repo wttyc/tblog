@@ -1,5 +1,6 @@
 package com.tblog.controller;
 
+import com.tblog.common.Constants;
 import com.tblog.common.MD5Utils;
 import com.tblog.entity.User;
 import com.tblog.mail.SendEmail;
@@ -24,8 +25,8 @@ import java.util.concurrent.TimeUnit;
  * @date 2019/5/10
  */
 @Controller
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/**/user")
+public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
@@ -45,16 +46,79 @@ public class UserController {
         return "/regist/registerSuccess";
     }
 
+//    @RequestMapping(value = "/login",method = RequestMethod.GET)
+////    public String login(){
+////        logger.info("进入登录页面aaz.a.");
+////        return "/login";
+////    }
+
     /**
-     * 用户登录
+     * 判断是否登录
      * @param model
      * @return
      */
-    @RequestMapping(value = "/login",method = RequestMethod.GET)
-    public String login(Model model){
-        return null;
+    @RequestMapping(value = "/judgeLogin",method = RequestMethod.GET)
+    public String judgeLogin(Model model){
+        User user = (User) getSession().getAttribute("user");
+        if (user!=null){
+            return "/personal/personal";
+        }
+        return "../login";
     }
 
+    /**
+     * 账号密码登录
+     *
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/normalLogin", method = RequestMethod.POST)
+    public String normalLogin(Model model,
+                              @RequestParam(value = "username", required = false) String username,
+                              @RequestParam(value = "password", required = false) String password,
+                              @RequestParam(value = "code", required = false) String code) {
+
+
+        if (StringUtils.isBlank(code)) {
+            model.addAttribute("error", "fail");
+            return "../login";
+        }
+
+        //校验验证码是否正确
+        if (checkValidateCode(code) != 1) {
+            model.addAttribute("error", "fail");
+            return "../login";
+        }
+        password = MD5Utils.encodeToHex(password + Constants.SALT);
+        User user = userService.login(username, password);
+
+//        System.out.println("user.getStatus:"+user.getState());
+        if (user != null) {
+            if ("0".equals(user.getState())) {
+
+                //未激活
+                model.addAttribute("email",username);
+                model.addAttribute("error","active");
+                return "../login";
+
+
+//                model.addAttribute("email", username);
+//                model.addAttribute("error", "active");
+//                return "redirect:../login.jsp/{email}";
+            }
+            logger.info("用户使用 账号密码 登录成功.");
+            model.addAttribute("user", user);
+            getSession().setAttribute("user",user);
+            return "/personal/personal";
+        } else {
+            logger.info("用户使用 账号密码 登录失败.");
+            model.addAttribute("error", "fail");
+            model.addAttribute("email", username);
+//            return "redirect:/login.jsp";
+            return "../login";
+        }
+
+    }
 
 
     /**
@@ -79,7 +143,8 @@ public class UserController {
         if (user != null && "1".equals(user.getState())) {
             logger.info("=============账号:" + email + " 已经激活=============");
             model.addAttribute("success", "您的账号已经激活,请登录.");
-            return "../user/login";
+//            return "../login";
+            return "user/login";
         } else if (redisCode == null) {
             logger.info("=============激活码:" + redisCode + "过期了=============");
             //激活码过期
@@ -108,8 +173,7 @@ public class UserController {
      * @param model
      * @return
      */
-    @RequestMapping(value = "/sendEmail", method = RequestMethod.GET
-    )
+    @RequestMapping(value = "/sendEmail", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> sendEmail(Model model) {
         Map map = new HashMap<String, Object>();
@@ -139,6 +203,12 @@ public class UserController {
             return "../register";
         }
         int b = checkValidateCode(code);
+
+        /**
+         * TODO: 2019/7/26
+         *  error 后可能应该跟 fail
+         */
+
         if (b == -1) {
             model.addAttribute("error", "验证码超时,请重新注册!");
             return "../register";
@@ -167,13 +237,13 @@ public class UserController {
 
             user.setEmail(email);
             user.setNickName(nickName);
-            user.setPassword(MD5Utils.encodeToHex(password + "tsalt"));
+            user.setPassword(MD5Utils.encodeToHex(password + Constants.SALT));
             user.setEnable("0");
             user.setState("0");
             user.setPhone(phone);
             user.setImgUrl("/images/icon_m.jpg");
 
-            //邮件激活码F
+            //邮件激活码
             String validateCode = MD5Utils.encodeToHex(email + System.currentTimeMillis());
             //1小时内激活有效
             redisTemplate.opsForValue().set(email, validateCode, 1, TimeUnit.HOURS);
@@ -194,6 +264,9 @@ public class UserController {
 
     /**
      * 校验激活码
+     * -1 : 验证码为null
+     * 0 : 验证码错误
+     * 1 : 验证码正确
      *
      * @param code
      * @return
@@ -237,6 +310,8 @@ public class UserController {
          *   不验证 email 是否重复
          *   验证则需要将以下两行互换
          */
+
+
         User user = null;
 //        User user = userService.findByEmail(email);
 
@@ -263,7 +338,7 @@ public class UserController {
     @ResponseBody
     public Map<String, Object> checkCode(Model model, @RequestParam(value = "code", required = false) String code) {
 
-        logger.info("注册---判断验证码" + code + "是否正确");
+        logger.info("---判断验证码" + code + "是否正确");
         Map map = new HashMap<String, Object>();
         ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         String captcha = (String) attrs.getRequest().getSession().getAttribute("captcha");
@@ -271,8 +346,11 @@ public class UserController {
 
         if (code.equalsIgnoreCase(captcha)) {
             map.put("message", "success");
+            System.out.println("验证码正确");
         } else {
             map.put("message", "fail");
+            System.out.println("验证码错误   captcha: " + captcha+"   code : "+code);
+
         }
 
         return map;

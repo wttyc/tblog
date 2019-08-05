@@ -217,7 +217,9 @@
         document.getElementById("wxImg").style.display='none';
     }
     $("#btn").click(function () {
-        location.href="${ctx}/user/login";
+
+        <%--location.href="${ctx}/user/login";--%>
+        location.href="${ctx}/login.jsp?email=${email}";
     });
 </script>
 </html>

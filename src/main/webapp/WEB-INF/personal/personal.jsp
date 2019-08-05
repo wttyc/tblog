@@ -319,7 +319,7 @@
 
                 </a></li>
             </ul>
-            <img src="images/q.png" width="30" style="margin-top: 4px"/>
+            <img src="../${user.imgUrl}" width="30" style="margin-top: 4px"/>
         </div>
     </div>
 
@@ -331,7 +331,7 @@
         <input type="hidden" name="creator" value="13149346">
         <div class="avatar-container-80 center">
             <a href="#" title="${user.nickName}" class="avatar" target="_blank">
-                <img src="images/icon_m.jpg" width="80" height="80" alt="">
+                <img src="../${user.imgUrl}" width="80" height="80" alt="">
             </a>
 
         </div>
@@ -340,7 +340,7 @@
         <div class="author-info">
             <p class="author-info-title">
                 <a href="#" title="${user.nickName}"
-                   class="title-content" target="_blank">小黑
+                   class="title-content" target="_blank">${user.nickName}
                 </a>
             </p>
             <div class="position-info">
